@@ -46,7 +46,7 @@
 #include <linux/proc_fs.h>
 //cmadd
 
-//cmadd 
+//cmadd
 static bool g_cyclecount_initialized = false;
 extern bool rtc_probe_done;
 static struct CYCLE_COUNT_DATA g_cycle_count_data = {
@@ -1586,7 +1586,6 @@ static int qg_get_cc_soc(void *data, int *cc_soc)
 
 	return 0;
 }
-
 
 static int qg_restore_cycle_count(void *data, u16 *buf, int length)
 {
@@ -3915,7 +3914,7 @@ static const struct dev_pm_ops qpnp_qg_pm_ops = {
 };
 
 #if 1
-//cmadd 
+//cmadd
 //ASUS_BSP battery safety upgrade +++
 static int batt_safety_proc_show(struct seq_file *buf, void *data)
 {
@@ -4073,7 +4072,7 @@ static int batt_safety_csc_backup(void){
 
 	rc = file_op(BAT_PERCENT_SD_FILE_NAME, CYCLE_COUNT_DATA_OFFSET,
 	(char *)&buf2, sizeof(char), FILE_OP_WRITE);
-	if(rc < 0 ) 
+	if(rc < 0 )
 		BAT_DBG_E("Write cycle count percent file failed!\n");
 #endif
 
@@ -4169,7 +4168,7 @@ static ssize_t batt_safety_csc_proc_write(struct file *file,const char __user *b
 		case 1: //backup /persist to /sdcard
 			batt_safety_csc_backup();
 		break;
-		case 2: //resotre /sdcard from /persist 
+		case 2: //resotre /sdcard from /persist
 			batt_safety_csc_restore();
 			break;
 		case 3: //write cycle count to /sdcard
@@ -4422,7 +4421,7 @@ static void create_batt_cycle_count_proc_file(void)
 		printk(" create batt_health_config_proc_file failed!\n");
 }
 
-//Write back batt_cyclecount data before restart/shutdown 
+//Write back batt_cyclecount data before restart/shutdown
 static int reboot_shutdown_prep(struct notifier_block *this,
 			      unsigned long event, void *ptr)
 {
@@ -4443,7 +4442,7 @@ static struct notifier_block reboot_blk = {
 };
 //ASUS_BSP battery safety upgrade ---
 
-//ASUS_BSP battery safety upgrade 
+//ASUS_BSP battery safety upgrade
 static void init_battery_safety(struct qpnp_qg *fg)
 {
 	fg->condition1_battery_time = BATTERY_USE_TIME_CONDITION1;
@@ -4472,7 +4471,7 @@ static int backup_bat_percentage(void)
 		bat_percent = 90;
 	}
 	sprintf(buf, "%d\n", bat_percent);
-	pr_info("bat_percent=%d;reload_condition=%d\n", bat_percent, g_cycle_count_data.reload_condition);	
+	pr_info("bat_percent=%d;reload_condition=%d\n", bat_percent, g_cycle_count_data.reload_condition);
 
 	rc = file_op(BAT_PERCENT_FILE_NAME, CYCLE_COUNT_DATA_OFFSET,
 		(char *)&buf, sizeof(char), FILE_OP_WRITE);
@@ -4489,7 +4488,7 @@ static int backup_bat_cyclecount(void)
 	int rc;
 
 	sprintf(buf, "%d\n", g_cycle_count_data.cycle_count);
-	BAT_DBG("cycle_count=%d\n", g_cycle_count_data.cycle_count);	
+	BAT_DBG("cycle_count=%d\n", g_cycle_count_data.cycle_count);
 
 	rc = file_op(BAT_CYCLE_SD_FILE_NAME, CYCLE_COUNT_DATA_OFFSET,
 		(char *)&buf, sizeof(char)*30, FILE_OP_WRITE);
@@ -4507,12 +4506,12 @@ static int backup_bat_safety(void)
 	char buf[70]={0};
 	int rc;
 
-	sprintf(buf, "%lu,%d,%lu,%lu,%lu\n", 
-		g_cycle_count_data.battery_total_time, 
-		g_cycle_count_data.cycle_count, 
-		g_cycle_count_data.high_temp_total_time, 
+	sprintf(buf, "%lu,%d,%lu,%lu,%lu\n",
+		g_cycle_count_data.battery_total_time,
+		g_cycle_count_data.cycle_count,
+		g_cycle_count_data.high_temp_total_time,
 		g_cycle_count_data.high_vol_total_time,
-		g_cycle_count_data.high_temp_vol_time);		
+		g_cycle_count_data.high_temp_vol_time);
 
 	rc = file_op(BAT_SAFETY_FILE_NAME, CYCLE_COUNT_DATA_OFFSET,
 		(char *)&buf, sizeof(char)*70, FILE_OP_WRITE);
@@ -4563,7 +4562,7 @@ static int init_batt_cycle_count_data(void)
 			pr_err("backup_bat_cyclecount failed!\n");
 			return -1;
 		}
-#endif	
+#endif
 		rc = backup_bat_safety();
 		if(rc < 0){
 			pr_err("backup_bat_cyclecount failed!\n");
@@ -4767,7 +4766,7 @@ static void calculation_battery_time_fun(unsigned long time)
 	BAT_DBG("time=%lu;battery_total_time=%lu\n", time,g_cycle_count_data.battery_total_time);
 	last_time = time;
 }
-#endif 
+#endif
 
 //static int write_test_value = 0;
 static void update_battery_safe(struct qpnp_qg *fg)
@@ -4790,17 +4789,17 @@ static void update_battery_safe(struct qpnp_qg *fg)
 			return;
 		}
 	}
-	
+
 	//temp = get_sram_prop_now(fg, FG_DATA_BATT_TEMP); cmadd
-	
+
 	rc = qg_get_battery_temp(fg, &temp);
 	if (rc < 0) {
 		pr_err("Error in getting battery temp, rc=%d\n", rc);
 		return;
 	}
 
-	//capacity = get_prop_capacity(fg);cmadd 
-	
+	//capacity = get_prop_capacity(fg);cmadd
+
 	rc = qg_get_battery_capacity(fg, &capacity);
 	if (rc < 0) {
 		pr_err("Error in getting capacity, rc=%d\n", rc);
@@ -4824,7 +4823,7 @@ static void update_battery_safe(struct qpnp_qg *fg)
 	calculation_time_fun(TOTOL_TIME_CAL_TYPE);
 
 	if(capacity == FULL_CAPACITY_VALUE){
-		calculation_time_fun(HIGH_VOL_CAL_TYPE);	
+		calculation_time_fun(HIGH_VOL_CAL_TYPE);
 	}else{
 		last_high_vol_time = 0; //exit high vol
 	}
@@ -4880,7 +4879,7 @@ static int resotre_bat_health(void)
 	int i=0, rc = 0;
 
 	memset(&g_bat_health_data_backup,0,sizeof(struct BAT_HEALTH_DATA_BACKUP)*BAT_HEALTH_NUMBER_MAX);
-	
+
 	/* Read cycle count data from emmc */
 	rc = file_op(BAT_HEALTH_DATA_FILE_NAME, BAT_HEALTH_DATA_OFFSET,
 		(char*)&g_bat_health_data_backup, sizeof(struct BAT_HEALTH_DATA_BACKUP)*BAT_HEALTH_NUMBER_MAX, FILE_OP_READ);
@@ -4902,36 +4901,22 @@ static int resotre_bat_health(void)
 	return 0;
 }
 
-static int modify_bat_health_data(void)
-{
-	int i=0;
-
-	for(i=1; i<BAT_HEALTH_NUMBER_MAX-1;i++){
-		sprintf(g_bat_health_data_backup[i].date, "%s", g_bat_health_data_backup[i+1].date);
-		g_bat_health_data_backup[i].health = g_bat_health_data_backup[i+1].health;
-	}
-	memset(&g_bat_health_data_backup[BAT_HEALTH_NUMBER_MAX-1], 0, sizeof(struct BAT_HEALTH_DATA_BACKUP));
-
-	return 0;
-}
-
 static int backup_bat_health(void)
 {
 	int bat_health, rc;
 	struct timespec ts;
-	struct rtc_time tm; 
+	struct rtc_time tm;
 	int health_t;
 	int count=0, i=0;
 	unsigned long long bat_health_accumulate=0;
 
-	getnstimeofday(&ts); 
-	rtc_time_to_tm(ts.tv_sec,&tm); 
+	getnstimeofday(&ts);
+	rtc_time_to_tm(ts.tv_sec,&tm);
 
 	bat_health = g_bat_health_data.bat_health;
 
-	if(g_health_upgrade_index >= BAT_HEALTH_NUMBER_MAX-1){
-		g_health_upgrade_index = BAT_HEALTH_NUMBER_MAX-1;
-		modify_bat_health_data();
+	if(g_health_upgrade_index == BAT_HEALTH_NUMBER_MAX-1){
+		g_health_upgrade_index = 1;
 	}else{
 		g_health_upgrade_index++;
 	}
@@ -4974,7 +4959,7 @@ int batt_health_csc_backup(void){
 
 	memset(&buf,0,sizeof(struct BAT_HEALTH_DATA_BACKUP)*BAT_HEALTH_NUMBER_MAX);
 	memset(&buf2,0,sizeof(char)*BAT_HEALTH_NUMBER_MAX*30);
-	
+
 	rc = file_op(BAT_HEALTH_DATA_FILE_NAME, BAT_HEALTH_DATA_OFFSET,
 		(char*)&buf, sizeof(struct BAT_HEALTH_DATA)*BAT_HEALTH_NUMBER_MAX, FILE_OP_READ);
 	if(rc < 0) {
@@ -4990,7 +4975,7 @@ int batt_health_csc_backup(void){
 
 	rc = file_op(BAT_HEALTH_DATA_SD_FILE_NAME, BAT_HEALTH_DATA_OFFSET,
 	(char *)&buf2, sizeof(char)*BAT_HEALTH_NUMBER_MAX*30, FILE_OP_WRITE);
-	if(rc < 0 ) 
+	if(rc < 0 )
 		BAT_DBG("Write bat health file failed!\n");
 
 
@@ -5019,7 +5004,7 @@ static void update_battery_health(struct qpnp_qg *chip){
 		return;
 	}
 	qg_get_battery_capacity(chip, &bat_capacity); //cmadd
-	//bat_capacity = get_prop_capacity(chip); 
+	//bat_capacity = get_prop_capacity(chip);
 
 	if(bat_capacity == g_health_upgrade_start_level && g_bat_health_data.start_time == 0){
 		wake_lock(&bat_health_lock);
@@ -5077,8 +5062,8 @@ void battery_health_worker(struct work_struct *work)
 	battery_health_upgrade_data_polling(g_health_upgrade_upgrade_time);
 }
 /* add for asus battery health update end */
-//cmadd 
-#endif 
+//cmadd
+#endif
 static int qpnp_qg_probe(struct platform_device *pdev)
 {
 	int rc = 0, soc = 0, nom_cap_uah;
@@ -5122,7 +5107,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 	chip->soh = -EINVAL;
 	chip->esr_actual = -EINVAL;
 	chip->esr_nominal = -EINVAL;
-	//cmadd 
+	//cmadd
 	INIT_DELAYED_WORK(&battery_health_work, battery_health_worker);
 	INIT_DELAYED_WORK(&battery_safety_work, battery_safety_worker); //ASUS_BSP battery safety upgrade
      //cmadd

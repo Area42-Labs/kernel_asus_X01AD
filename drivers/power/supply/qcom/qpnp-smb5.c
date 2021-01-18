@@ -311,8 +311,7 @@ static int smb5_chg_config_init(struct smb5 *chip)
 		break;
 	case PMI632_SUBTYPE:
 		chip->chg.smb_version = PMI632_SUBTYPE;
-		chg->wa_flags |= WEAK_ADAPTER_WA | USBIN_OV_WA |
-					CHG_TERMINATION_WA;
+		chg->wa_flags |= WEAK_ADAPTER_WA | USBIN_OV_WA;
 		if (pmic_rev_id->rev4 >= 2)
 			chg->wa_flags |= MOISTURE_PROTECTION_WA;
 		chg->param = smb5_pmi632_params;
@@ -533,9 +532,6 @@ static int smb5_parse_dt(struct smb5 *chip)
 
 	chg->moisture_protection_enabled = of_property_read_bool(node,
 					"qcom,moisture-protection-enable");
-
-	chg->fcc_stepper_enable = of_property_read_bool(node,
-					"qcom,fcc-stepping-enable");
 
 	return 0;
 }
@@ -1298,7 +1294,6 @@ static enum power_supply_property smb5_batt_props[] = {
 	POWER_SUPPLY_PROP_CHARGER_ID,
 	// Huaqin add for ZQL1830-1470 by wenyaqi at 20181023 end
 	POWER_SUPPLY_PROP_CHARGE_FULL,
-	POWER_SUPPLY_PROP_FCC_STEPPER_ENABLE,
 };
 
 #define ITERM_SCALING_FACTOR_PMI632	1525
@@ -1403,8 +1398,6 @@ static int smb5_batt_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CURRENT_NOW:
 		rc = smblib_get_prop_from_bms(chg,
 				POWER_SUPPLY_PROP_CURRENT_NOW, val);
-		if (!rc)
-			val->intval *= (-1);
 		break;
 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX:
 		val->intval = get_client_vote(chg->fcc_votable,
@@ -1456,9 +1449,6 @@ static int smb5_batt_get_prop(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
 		rc = smblib_get_prop_from_bms(chg,
 				POWER_SUPPLY_PROP_CHARGE_FULL, val);
-		break;
-	case POWER_SUPPLY_PROP_FCC_STEPPER_ENABLE:
-		val->intval = chg->fcc_stepper_enable;
 		break;
 // Huaqin add for ZQL1830-1470 by wenyaqi at 20181023 start
 	case POWER_SUPPLY_PROP_CHARGER_ID:
@@ -3308,6 +3298,7 @@ static int smb5_probe(struct platform_device *pdev)
 		pr_err("Failed in post init rc=%d\n", rc);
 		goto free_irq;
 	}
+
 	smb5_create_debugfs(chip);
 
 	rc = smb5_show_charger_status(chip);

@@ -313,6 +313,7 @@ int qg_get_battery_temp(struct qpnp_qg *chip, int *temp)
 {
 	int rc = 0;
 	struct qpnp_vadc_result result;
+
 	if (chip->battery_missing) {
 		*temp = 250;
 		return 0;
@@ -330,6 +331,7 @@ int qg_get_battery_temp(struct qpnp_qg *chip, int *temp)
 			result.physical, result.measurement);
 
 	*temp = (int)result.physical;
+
 	return rc;
 }
 
